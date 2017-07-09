@@ -71,7 +71,7 @@ func readConfig(name string) Config {
 	return config
 }
 
-func validateConfig(config Config) {
+func validateConfig(config Config) Config {
 	if !config.Http.Enabled && !config.Https.Enabled {
 		log.Fatal("At least one of http or https must be enabled!")
 	}
@@ -87,6 +87,7 @@ func validateConfig(config Config) {
 	if len(config.Path.Client) == 0 {
 		config.Path.Client = "../client"
 	}
+	return config
 }
 
 func makeDelkey(ident string) string {
@@ -231,7 +232,7 @@ func main() {
 	flag.Parse()
 
 	config = readConfig(*configName)
-	validateConfig(config)
+	config = validateConfig(config)
 
 	http.Handle("/i/", http.StripPrefix("/i", http.FileServer(http.Dir(config.Path.I))))
 	http.HandleFunc("/up", upload)
